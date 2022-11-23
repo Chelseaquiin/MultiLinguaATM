@@ -29,6 +29,7 @@ namespace ATMAPP
             Console.WriteLine("1. Deposit");
             Console.WriteLine("2. Withdraw");
             Console.WriteLine("3. Balance");
+            Console.WriteLine("4. Transfer");
             Console.WriteLine("0. Log Out");
         }
 
@@ -46,6 +47,7 @@ namespace ATMAPP
             Console.WriteLine("otu. Tinye ego");
             Console.WriteLine("abuo. Weta ego");
             Console.WriteLine("ato. Mara Ego one inwe");
+            Console.WriteLine("ano. Tinyere mmadu ego");
             Console.WriteLine("0. Puo");
         }
 
@@ -54,6 +56,7 @@ namespace ATMAPP
             Console.WriteLine("1. Put money");
             Console.WriteLine("2. Comot money");
             Console.WriteLine("3. See your money");
+            Console.WriteLine("4. Send money give person");
             Console.WriteLine("0. Begin dey go");
         }
     }

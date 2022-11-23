@@ -4,7 +4,7 @@
     {
         private List<CardDetails> userList = new List<CardDetails>();
         private CardDetails account = new CardDetails();
-
+        private CardDetails accountToTransfer = new CardDetails();
         public void Balance()
         {
 
@@ -14,14 +14,50 @@
             Console.WriteLine("\nBalance " + balance);
 
         }
+        public void Transfer()
+        {
+            try
+            {
+                Console.WriteLine();
+                Designs.LogInAnime();
+                Console.WriteLine("\nAccount to transfer to");
+                string cardNum = Console.ReadLine();
 
+                Console.WriteLine("How much do you want to transfer?");
+
+                double amount = Convert.ToDouble(Console.ReadLine());
+
+                accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+
+                if (account.AccountBalance >= amount && accountToTransfer != null)
+                {
+                    accountToTransfer.AccountBalance += amount;
+
+                    account.AccountBalance -= amount;
+                    Designs.LogInAnime();
+                    Console.WriteLine($"\nTransfer to {accountToTransfer.FullName} was successful. \nYour Balance is: {account.AccountBalance}");
+                }
+                else
+                {
+                    Designs.LogInAnime();
+                    Console.WriteLine("\ncard not recognized or Insufficient funds");
+                    Console.WriteLine($"Balance {account.AccountBalance}");
+                }
+            }
+            catch(FormatException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+        }
         public void Deposit()
         {
 
             Console.WriteLine("Deposit some cash");
             try
-            {
+            {   
                 double deposit = Convert.ToDouble(Console.ReadLine());
+                Designs.LogInAnime();
 
                 account.AccountBalance += deposit;
 
@@ -41,8 +77,10 @@
 
             try
             {
+              
 
                 double withdrawal = Convert.ToDouble(Console.ReadLine());
+                Designs.LogInAnime();
 
                 if (account.AccountBalance < withdrawal)
                 {
@@ -81,8 +119,14 @@
                 string cardNum = Console.ReadLine();
                 account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
 
-                if (account != null) { break; }
-                else { Console.WriteLine("card not recognized"); }
+                if (account != null) 
+                {
+                    break;
+                }
+                else 
+                { 
+                    Console.WriteLine("card not recognized"); 
+                }
 
             }
 
@@ -112,7 +156,7 @@
                     }
                     else
                     {
-                        Console.WriteLine("Try again");
+                        Console.WriteLine("Incorrect Pin. Try again");
                     }
 
                     Designs.LongLine();
@@ -148,6 +192,9 @@
                             break;
                         case 3:
                             Balance();
+                            break;
+                        case 4:
+                            Transfer();
                             break;
                         case 0:
                             Console.WriteLine("Insert pin or press 0 to return to the main menu");

@@ -5,6 +5,7 @@ namespace ATMAPP
     {
         private List<CardDetails> userList = new List<CardDetails>();
         private CardDetails account = new CardDetails();
+        private CardDetails accountToTransfer = new CardDetails();
 
         public void Balance()
         {
@@ -15,7 +16,42 @@ namespace ATMAPP
             Console.WriteLine("\nYour money na " + balance);
 
         }
+        public void Transfer()
+        {
+            try
+            {
+                Console.WriteLine();
+                Designs.LogInAnime();
+                Console.WriteLine("\nWetin be the person card number wey you wan send money to");
+                string cardNum = Console.ReadLine();
 
+                Console.WriteLine("How much you wan send give am?");
+
+                double amount = Convert.ToDouble(Console.ReadLine());
+
+                accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+
+                if (account.AccountBalance >= amount && accountToTransfer != null)
+                {
+                    accountToTransfer.AccountBalance += amount;
+
+                    account.AccountBalance -= amount;
+                    Designs.LogInAnime();
+                    Console.WriteLine($"\nYour transfer to {accountToTransfer.FullName} been go well. \nYour money come remain: {account.AccountBalance}");
+                }
+                else
+                {
+                    Designs.LogInAnime();
+                    Console.WriteLine("\nwe no sabi be person card or your money no reach");
+                    Console.WriteLine($"Your money na {account.AccountBalance}");
+                }
+            }
+            catch (FormatException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+        }
         public void Deposit()
         {
 
@@ -149,6 +185,9 @@ namespace ATMAPP
                             break;
                         case 3:
                             Balance();
+                            break;
+                        case 4:
+                            Transfer();
                             break;
                         case 0:
                             Console.WriteLine("Put your pin or press 0 to return to the main menu");

@@ -5,6 +5,7 @@ namespace ATMAPP
     {
         private List<CardDetails> userList = new List<CardDetails>();
         private CardDetails account = new CardDetails();
+        private CardDetails accountToTransfer = new CardDetails();
 
         public void Balance()
         {
@@ -12,7 +13,43 @@ namespace ATMAPP
             double balance = account.AccountBalance;
             Designs.LogInAnime();
 
-            Console.WriteLine("\nBalance " + balance);
+            Console.WriteLine("\nEgo gi bu " + balance);
+
+        }
+        public void Transfer()
+        {
+            try
+            {
+                Console.WriteLine();
+                Designs.LogInAnime();
+                Console.WriteLine("\nKedu number di na card onye ichoro inye ego?");
+                string cardNum = Console.ReadLine();
+
+                Console.WriteLine("Ego one k'ichoro inye onye a?");
+
+                double amount = Convert.ToDouble(Console.ReadLine());
+
+                accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+
+                if (account.AccountBalance >= amount && accountToTransfer != null)
+                {
+                    accountToTransfer.AccountBalance += amount;
+
+                    account.AccountBalance -= amount;
+                    Designs.LogInAnime();
+                    Console.WriteLine($"\n Ego etinyere {accountToTransfer.FullName} gara ofuma. \nEgo gi bu: {account.AccountBalance}");
+                }
+                else
+                {
+                    Designs.LogInAnime();
+                    Console.WriteLine("\nAnyi amaro card ahu maobu n'ego gi ezuro");
+                    Console.WriteLine($"Ego gi putara {account.AccountBalance}");
+                }
+            }
+            catch (FormatException e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
         }
 
@@ -149,6 +186,9 @@ namespace ATMAPP
                             break;
                         case 3:
                             Balance();
+                            break;
+                        case 4:
+                            Transfer();
                             break;
                         case 0:
                             Console.WriteLine("Tinye pin maobu itinye 0 maka inaghachi");

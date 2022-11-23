@@ -11,5 +11,6 @@ namespace ATMAPP
         public void Deposit();
         public void Withdraw();
         public void Balance();
+        public void Transfer();
     }
 }
