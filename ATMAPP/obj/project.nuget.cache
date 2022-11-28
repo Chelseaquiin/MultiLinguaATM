@@ -1,13 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "nVRfFovtIQvip6T+glVg5mV//grRTB2h1Xx7fJvdrLnVzA8q+xI+7V63NzD/3aqlPpWFkOZd0GFH7oHB4VYrRA==",
+  "dgSpecHash": "9l/BTjcoSz8zxTEWeyoi//QkE+I6XqxgS2vmqA/y46tMdO11/55T5iar8kQear9/dCOyexumz5aYVKJf3zmMeQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\source\\repos\\ATMAPP\\ATMAPP\\ATMAPP.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.11\\microsoft.netcore.app.host.win-x64.6.0.11.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.11\\microsoft.aspnetcore.app.ref.6.0.11.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.11\\microsoft.windowsdesktop.app.ref.6.0.11.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.11\\microsoft.netcore.app.ref.6.0.11.nupkg.sha512"
-  ],
+  "expectedPackageFiles": [],
   "logs": []
 }

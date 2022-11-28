@@ -29,7 +29,12 @@
 
                 accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
 
-                if (account.AccountBalance >= amount && accountToTransfer != null)
+                if (amount < 100)
+                {
+                    Console.WriteLine("You can't transfer less than 100 naira");
+                }
+
+               else if (account.AccountBalance >= amount && accountToTransfer != null)
                 {
                     accountToTransfer.AccountBalance += amount;
 
@@ -43,8 +48,11 @@
                     Console.WriteLine("\ncard not recognized or Insufficient funds");
                     Console.WriteLine($"Balance {account.AccountBalance}");
                 }
+
+
+
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -55,14 +63,21 @@
 
             Console.WriteLine("Deposit some cash");
             try
-            {   
+            {
                 double deposit = Convert.ToDouble(Console.ReadLine());
                 Designs.LogInAnime();
 
-                account.AccountBalance += deposit;
+                if (deposit < 100)
+                {
+                    Console.WriteLine("You can't deposit less than 100");
+                }
+                else
+                {
+                    account.AccountBalance += deposit;
 
-                Designs.LogInAnime();
-                Console.WriteLine($"\nYour current Balance = {account.AccountBalance}");
+                    Designs.LogInAnime();
+                    Console.WriteLine($"\nYour current Balance = {account.AccountBalance}");
+                }
             }
             catch (FormatException e)
             {
@@ -77,12 +92,17 @@
 
             try
             {
-              
+
 
                 double withdrawal = Convert.ToDouble(Console.ReadLine());
                 Designs.LogInAnime();
 
-                if (account.AccountBalance < withdrawal)
+                if(withdrawal < 100)
+                {
+                    Console.WriteLine($"You can't withdraw {withdrawal}");
+                    Console.WriteLine("Select 100 and above");
+                }
+                else if (account.AccountBalance < withdrawal)
                 {
                     Designs.LogInAnime();
                     Console.WriteLine("\nInsufficient Balance");
@@ -119,13 +139,13 @@
                 string cardNum = Console.ReadLine();
                 account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
 
-                if (account != null) 
+                if (account != null)
                 {
                     break;
                 }
-                else 
-                { 
-                    Console.WriteLine("card not recognized"); 
+                else
+                {
+                    Console.WriteLine("card not recognized");
                 }
 
             }
