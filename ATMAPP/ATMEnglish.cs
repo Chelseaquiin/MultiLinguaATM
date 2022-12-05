@@ -1,7 +1,5 @@
 ﻿namespace ATMAPP
 {
-
-    
     internal class ATMEnglish
     {
         event Action<string> AccountLocked;
@@ -62,8 +60,7 @@
                 else
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\nInsufficient funds");
-                    Console.WriteLine($"\nBalance {account.AccountBalance}");
+                    Console.WriteLine($"\nInsufficient funds.\nBalance {account.AccountBalance}");
                 }
 
 
@@ -117,8 +114,8 @@
 
                 if (withdrawal < 100)
                 {
-                    Console.WriteLine($"You can't withdraw {withdrawal}");
-                    Console.WriteLine("Select 100 and above");
+                    Console.WriteLine($"You can't withdraw {withdrawal}. \nSelect 100 and above");
+ 
                 }
                 else if (account.AccountBalance < withdrawal)
                 {
@@ -228,7 +225,7 @@
         protected virtual void Init()
         {
             Console.Clear();
-            Console.WriteLine("\nWelcome!");
+            Console.WriteLine($"\nWelcome {account.FullName}!");
             Designs.Options();
 
             while (true)

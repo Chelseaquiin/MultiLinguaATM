@@ -26,22 +26,24 @@ namespace ATMAPP
                 double amount = Convert.ToDouble(Console.ReadLine());
 
                 accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
-                if (amount < 100)
-                {
-                    Console.WriteLine("\nYou no fit transfer 100 naira or the one wey small pass am");
-                }
+
                 if (accountToTransfer == null)
                 {
                     Console.WriteLine("We no sabi the account");
                 }
+                if (amount < 100)
+                {
+                    Console.WriteLine("\nYou no fit transfer 100 naira or the one wey small pass am");
+                }
+               
 
-                if (account.AccountBalance >= amount && accountToTransfer != null)
+                else if (account.AccountBalance >= amount && accountToTransfer != null)
                 {
                     accountToTransfer.AccountBalance += amount;
 
                     account.AccountBalance -= amount;
                     Designs.LogInAnime();
-                    Console.WriteLine($"\nYour transfer to {accountToTransfer.FullName} been go well. \nYour money come remain: {account.AccountBalance}");
+                    OnTransferSuccessful($"\nYour transfer to {accountToTransfer.FullName} been go well. \nYour money come remain: {account.AccountBalance}");
                 }
                 else
                 {
@@ -93,15 +95,13 @@ namespace ATMAPP
 
                 if (withdrawal < 100)
                 {
-                    Console.WriteLine($"You no fit withdraw {withdrawal}");
-                    Console.WriteLine("Select 100 and above");
+                    Console.WriteLine($"You no fit withdraw {withdrawal} \nSelect 100 and above");
                 }
 
-                if (account.AccountBalance < withdrawal)
+               else if (account.AccountBalance < withdrawal)
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\nYour money no reach");
-                    Console.WriteLine($"Your money na: {account.AccountBalance}");
+                    OnLowAccountBalance($"\nYour money no reach. \nYour money na: {account.AccountBalance}");
                 }
                 else
                 {
@@ -142,7 +142,7 @@ namespace ATMAPP
 
                     if (account.IsLocked == true)
                     {
-                        Console.WriteLine($"Your account is locked. Rectify this issue with your bank");
+                        OnAccountLocked($"Your account no dey open. Go your bank go fix am");
                         Environment.Exit(0);
                     }
 
@@ -167,7 +167,7 @@ namespace ATMAPP
                     int pin = Convert.ToInt32(Console.ReadLine());
                     if (account.TotalLogin == 3)
                     {
-                        Console.WriteLine($"Your account has been locked. You inputed a wrong pin {account.TotalLogin} times.");
+                        OnAccountLocked($"We don lock your account. You go put pin wey no correct {account.TotalLogin} times.");
                         Environment.Exit(0);
                     }
 
@@ -180,13 +180,13 @@ namespace ATMAPP
                     if (account.CardPin == pin)
                     {
 
-                        Console.WriteLine("\nYou don show " + account.FullName + ".");
+                        OnLoginSucceeded("\nYou don show " + account.FullName + ".");
                         Designs.LongLine();
                         Init();
                     }
                     else
                     {
-                        Console.WriteLine("Do am again");
+                        OnAccountTobeLockedSoon("Your pin no correct. We go lock am if you try am reach 4 times");
                     }
 
                     Designs.LongLine();

@@ -27,29 +27,28 @@ namespace ATMAPP
                 double amount = Convert.ToDouble(Console.ReadLine());
 
                 accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
-                if (amount < 100)
-                {
-                    Console.WriteLine("\nigaro etinyenwo ego ntakiri");
-                }
 
                 if (accountToTransfer == null)
                 {
                     Console.WriteLine("Anyi amaro akant a");
                 }
+                if (amount < 100)
+                {
+                    Console.WriteLine("\nigaro etinyenwo ego ntakiri");
+                }
 
-                if (account.AccountBalance >= amount && accountToTransfer != null)
+               else if (account.AccountBalance >= amount && accountToTransfer != null)
                 {
                     accountToTransfer.AccountBalance += amount;
 
                     account.AccountBalance -= amount;
                     Designs.LogInAnime();
-                    Console.WriteLine($"\n Ego etinyere {accountToTransfer.FullName} gara ofuma. \nEgo gi bu: {account.AccountBalance}");
+                    OnTransferSuccessful($"\n Ego etinyere {accountToTransfer.FullName} gara ofuma. \nEgo gi bu: {account.AccountBalance}");
                 }
                 else
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\nAnyi amaro card ahu maobu n'ego gi ezuro");
-                    Console.WriteLine($"Ego gi putara {account.AccountBalance}");
+                    Console.WriteLine($"\nAnyi amaro card ahu maobu n'ego gi ezuro. \nEgo gi putara {account.AccountBalance}");
                 }
             }
             catch (FormatException e)
@@ -59,7 +58,7 @@ namespace ATMAPP
 
         }
 
-        protected virtual void Deposit()
+        protected override void Deposit()
         {
             Console.Clear();
             Console.WriteLine("Tinye ego");
@@ -79,7 +78,7 @@ namespace ATMAPP
 
         }
 
-        protected virtual void Withdraw()
+        protected override void Withdraw()
         {
             Console.Clear();
             Console.WriteLine("Ego one k'ichoro iweta?");
@@ -97,8 +96,7 @@ namespace ATMAPP
                 if (account.AccountBalance < withdrawal)
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\nEgo gi ezuro");
-                    Console.WriteLine($"Ego gi bu: {account.AccountBalance}");
+                    OnLowAccountBalance($"\nEgo gi ezuro. \nEgo gi bu: {account.AccountBalance}");
                 }
                 else
                 {
@@ -137,7 +135,7 @@ namespace ATMAPP
                     account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
                     if (account.IsLocked == true)
                     {
-                        Console.WriteLine($"Akant gi kpochiri akpochi. Ga bank gi ka idozie ye");
+                        OnAccountLocked($"Akant gi kpochiri akpochi. Ga bank gi ka idozie ye");
                         Environment.Exit(0);
                     }
                     if (account != null) { break; }
@@ -163,7 +161,7 @@ namespace ATMAPP
 
                     if (account.TotalLogin == 3)
                     {
-                        Console.WriteLine($"Akpochigo akant gi. Itinyere pin n'adiro mma {account.TotalLogin}.");
+                        OnAccountLocked($"Akpochigo akant gi. Itinyere pin n'adiro mma {account.TotalLogin}.");
                         Environment.Exit(0);
                     }
                     if (pin == 0)
@@ -175,13 +173,14 @@ namespace ATMAPP
                     if (account.CardPin == pin)
                     {
 
-                        Console.WriteLine("\nNno " + account.FullName + ".");
+                        OnLoginSucceeded("\nNno " + account.FullName + ".");
                         Designs.LongLine();
                         Init();
                     }
                     else
                     {
                         Console.WriteLine("Meghariaya");
+                        account.TotalLogin++;
                     }
 
                     Designs.LongLine();

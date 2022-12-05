@@ -44,10 +44,10 @@ namespace ATMAPP
 
         internal static void IgboOptions()
         {
-            Console.WriteLine("otu. Tinye ego");
-            Console.WriteLine("abuo. Weta ego");
-            Console.WriteLine("ato. Mara Ego one inwe");
-            Console.WriteLine("ano. Tinyere mmadu ego");
+            Console.WriteLine("1. Tinye ego");
+            Console.WriteLine("2. Weta ego");
+            Console.WriteLine("3. Mara Ego one inwe");
+            Console.WriteLine("4. Tinyere mmadu ego");
             Console.WriteLine("0. Puo");
         }
 
