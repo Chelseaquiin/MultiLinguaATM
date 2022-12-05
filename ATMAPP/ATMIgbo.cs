@@ -1,25 +1,22 @@
 ﻿
 namespace ATMAPP
 {
-    internal class ATMIgbo : IActions, ILogin
+    internal class ATMIgbo : ATMEnglish
     {
-        private List<CardDetails> userList = new List<CardDetails>();
-        private CardDetails account = new CardDetails();
-        private CardDetails accountToTransfer = new CardDetails();
-
-        public void Balance()
+        protected override void Balance()
         {
-
+            Console.Clear();
             double balance = account.AccountBalance;
             Designs.LogInAnime();
 
             Console.WriteLine("\nEgo gi bu " + balance);
 
         }
-        public void Transfer()
+        protected override void Transfer()
         {
             try
             {
+                Console.Clear();
                 Console.WriteLine();
                 Designs.LogInAnime();
                 Console.WriteLine("\nKedu number di na card onye ichoro inye ego?");
@@ -30,6 +27,15 @@ namespace ATMAPP
                 double amount = Convert.ToDouble(Console.ReadLine());
 
                 accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+                if (amount < 100)
+                {
+                    Console.WriteLine("\nigaro etinyenwo ego ntakiri");
+                }
+
+                if (accountToTransfer == null)
+                {
+                    Console.WriteLine("Anyi amaro akant a");
+                }
 
                 if (account.AccountBalance >= amount && accountToTransfer != null)
                 {
@@ -53,9 +59,9 @@ namespace ATMAPP
 
         }
 
-        public void Deposit()
+        protected virtual void Deposit()
         {
-
+            Console.Clear();
             Console.WriteLine("Tinye ego");
             try
             {
@@ -73,14 +79,20 @@ namespace ATMAPP
 
         }
 
-        public void Withdraw()
+        protected virtual void Withdraw()
         {
+            Console.Clear();
             Console.WriteLine("Ego one k'ichoro iweta?");
 
             try
             {
 
                 double withdrawal = Convert.ToDouble(Console.ReadLine());
+                if (withdrawal < 100)
+                {
+                    Console.WriteLine($"imaro ewepu {withdrawal}");
+                    Console.WriteLine("weta 100 maobu nke kaririya");
+                }
 
                 if (account.AccountBalance < withdrawal)
                 {
@@ -100,14 +112,17 @@ namespace ATMAPP
                 Console.WriteLine(e.Message);
             }
         }
-
-        public void LogIn()
+        public void Start()
         {
-
-            userList.Add(new CardDetails("Amaka", "1234567890", 1234, 5000));
-            userList.Add(new CardDetails("Jude", "1236786890", 1234, 4300));
-            userList.Add(new CardDetails("Ada", "12367800009", 1234, 4700));
-            userList.Add(new CardDetails("James", "1236786890", 2341, 4000));
+            LogIn();
+        }
+        protected override void LogIn()
+        {
+            Console.Clear();
+            userList.Add(new CardDetails("Amaka", "1234567890", 1234, 5000, false));
+            userList.Add(new CardDetails("Jude", "1236786890", 1234, 4300, false));
+            userList.Add(new CardDetails("Ada", "12367800009", 1234, 4700, false));
+            userList.Add(new CardDetails("James", "1236786890", 2341, 4000, false));
 
             Console.WriteLine();
             Designs.LongLine();
@@ -116,15 +131,26 @@ namespace ATMAPP
 
             while (true)
             {
-                string cardNum = Console.ReadLine();
-                account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+                try
+                {
+                    string cardNum = Console.ReadLine();
+                    account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+                    if (account.IsLocked == true)
+                    {
+                        Console.WriteLine($"Akant gi kpochiri akpochi. Ga bank gi ka idozie ye");
+                        Environment.Exit(0);
+                    }
+                    if (account != null) { break; }
 
-                if (account != null) { break; }
-                else { Console.WriteLine("Anyi amaro akwukwo gi"); }
 
+                }
+                catch
+                {
+                    Console.WriteLine("Anyi amaro akwukwo gi");
+                }
             }
 
-            Console.WriteLine("\nTinye pin gi. Tinye 0 maka inaghachi");
+            
 
 
 
@@ -132,9 +158,14 @@ namespace ATMAPP
             {
                 try
                 {
+                    Console.WriteLine("\nTinye pin gi. Tinye 0 maka inaghachi");
                     int pin = Convert.ToInt32(Console.ReadLine());
 
-
+                    if (account.TotalLogin == 3)
+                    {
+                        Console.WriteLine($"Akpochigo akant gi. Itinyere pin n'adiro mma {account.TotalLogin}.");
+                        Environment.Exit(0);
+                    }
                     if (pin == 0)
                     {
                         Designs.LanguageOptions();
@@ -164,7 +195,7 @@ namespace ATMAPP
         }
 
 
-        private void Init()
+        protected override void Init()
         {
 
             Console.WriteLine("\nNno!");
@@ -202,7 +233,7 @@ namespace ATMAPP
                 }
                 catch
                 {
-                    Console.WriteLine("Ogaro. Tinye numbers 0 - 3");
+                    Console.WriteLine("Ogaro. Tinye numbers 0 - 4");
 
 
                 }

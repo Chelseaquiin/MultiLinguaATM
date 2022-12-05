@@ -1,4 +1,6 @@
-﻿namespace ATMAPP
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace ATMAPP
 {
     internal class ATM
     {
@@ -14,6 +16,13 @@
         public void Initialize()
         {
 
+
+            english.AddAccountLocked(HandleAccountLocked);
+            english.AddTransferSuccessful(HandleTransferSuccessful);
+            english.AddLoginSucceeded(HandleLoginSucceeded);
+            english.AddAccountTobeLockedSoon(HandleAccountTobeLockedSoon);
+            english.AddLowAccountBalance(HandleLowAccountBalance);
+
             Console.WriteLine("--------------Welcome to my MultiLingual ATM--------------");
             Designs.LanguageOptions();
 
@@ -27,13 +36,13 @@
                     switch (userInput)
                     {
                         case 1:
-                            english.LogIn();
+                            english.Start();
                             break;
                         case 2:
-                            igbo.LogIn();
+                            igbo.Start();
                             break;
                         case 3:
-                            pidgin.LogIn();
+                            pidgin.Start();
                             break;
                         case 0:
                             return;
@@ -45,15 +54,36 @@
                 catch
                 {
                     Console.WriteLine("Invalid. You can only choose whole numbers between 0 -3");
-                
-                }
-                
-            }
-            
 
+                }
+
+            }
+
+        }
+          public  static void HandleAccountLocked(string message)
+            {
+                Console.WriteLine("=> {0}", message);
+            }
+          public  static void HandleAccountTobeLockedSoon(string message)
+            {
+                Console.WriteLine("=> {0}", message);
+            }
+          public  static void HandleLoginSucceeded(string message)
+            {
+                Console.WriteLine("=> {0}", message);
+            }
+          public  static void HandleLowAccountBalance(string message)
+
+            {
+                Console.WriteLine("=> {0}", message);
+            }
+          public  static void HandleTransferSuccessful(string message)
+            {
+                Console.WriteLine("=> {0}", message);
+            }
         }
     }
 
 
 
-}
+

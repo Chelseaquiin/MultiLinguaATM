@@ -1,26 +1,22 @@
 ﻿
 namespace ATMAPP
 {
-    internal class ATMPidgin : IActions, ILogin
+    internal class ATMPidgin : ATMEnglish
     {
-        private List<CardDetails> userList = new List<CardDetails>();
-        private CardDetails account = new CardDetails();
-        private CardDetails accountToTransfer = new CardDetails();
-
-        public void Balance()
+        protected override void Balance()
         {
-
+            Console.Clear();
             double balance = account.AccountBalance;
             Designs.LogInAnime();
 
             Console.WriteLine("\nYour money na " + balance);
 
         }
-        public void Transfer()
+        protected override void Transfer()
         {
             try
             {
-                Console.WriteLine();
+                Console.Clear();
                 Designs.LogInAnime();
                 Console.WriteLine("\nWetin be the person card number wey you wan send money to");
                 string cardNum = Console.ReadLine();
@@ -30,6 +26,14 @@ namespace ATMAPP
                 double amount = Convert.ToDouble(Console.ReadLine());
 
                 accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+                if (amount < 100)
+                {
+                    Console.WriteLine("\nYou no fit transfer 100 naira or the one wey small pass am");
+                }
+                if (accountToTransfer == null)
+                {
+                    Console.WriteLine("We no sabi the account");
+                }
 
                 if (account.AccountBalance >= amount && accountToTransfer != null)
                 {
@@ -42,8 +46,8 @@ namespace ATMAPP
                 else
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\nwe no sabi be person card or your money no reach");
-                    Console.WriteLine($"Your money na {account.AccountBalance}");
+                    Console.WriteLine($"\nYou no get money.\nYour money na {account.AccountBalance}");
+                    
                 }
             }
             catch (FormatException e)
@@ -52,18 +56,24 @@ namespace ATMAPP
             }
 
         }
-        public void Deposit()
+        protected override void Deposit()
         {
-
+            Console.Clear();
             Console.WriteLine("Put money for here");
             try
             {
                 double deposit = Convert.ToDouble(Console.ReadLine());
+                if (deposit < 100)
+                {
+                    Console.WriteLine("You no fit put 100");
+                }
+                else
+                {
+                    account.AccountBalance += deposit;
 
-                account.AccountBalance += deposit;
-
-                Designs.LogInAnime();
-                Console.WriteLine($"\nYour money come be = {account.AccountBalance}");
+                    Designs.LogInAnime();
+                    Console.WriteLine($"\nYour money come be = {account.AccountBalance}");
+                }
             }
             catch (FormatException e)
             {
@@ -72,7 +82,7 @@ namespace ATMAPP
 
         }
 
-        public void Withdraw()
+        protected override void Withdraw()
         {
             Console.WriteLine("How much you wan comot?");
 
@@ -80,6 +90,12 @@ namespace ATMAPP
             {
 
                 double withdrawal = Convert.ToDouble(Console.ReadLine());
+
+                if (withdrawal < 100)
+                {
+                    Console.WriteLine($"You no fit withdraw {withdrawal}");
+                    Console.WriteLine("Select 100 and above");
+                }
 
                 if (account.AccountBalance < withdrawal)
                 {
@@ -99,31 +115,46 @@ namespace ATMAPP
                 Console.WriteLine(e.Message);
             }
         }
-
-        public void LogIn()
+        public void Start()
         {
-
-            userList.Add(new CardDetails("Amaka", "1234567890", 1234, 5000));
-            userList.Add(new CardDetails("Jude", "1236786890", 1234, 4300));
-            userList.Add(new CardDetails("Ada", "12367800009", 1234, 4700));
-            userList.Add(new CardDetails("James", "1236786890", 2341, 4000));
+            LogIn();
+        }
+        protected override void LogIn()
+        {
+            Console.Clear();
+            userList.Add(new CardDetails("Amaka", "1234567890", 1234, 5000, false));
+            userList.Add(new CardDetails("Jude", "1236786890", 1234, 4300, false));
+            userList.Add(new CardDetails("Ada", "12367800009", 1234, 4700, false));
+            userList.Add(new CardDetails("James", "1236786890", 2341, 4000, true));
 
             Console.WriteLine();
             Designs.LongLine();
 
-            Console.WriteLine("\nPut the number for your card here");
 
             while (true)
             {
-                string cardNum = Console.ReadLine();
-                account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+                try
+                {
+                    Console.WriteLine("\nPut the number for your card here");
 
-                if (account != null) { break; }
-                else { Console.WriteLine("We never see this card before"); }
+                    string cardNum = Console.ReadLine();
+                    account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
 
+                    if (account.IsLocked == true)
+                    {
+                        Console.WriteLine($"Your account is locked. Rectify this issue with your bank");
+                        Environment.Exit(0);
+                    }
+
+                    if (account != null) { break; }
+
+
+                }
+                catch
+                {
+                    Console.WriteLine("We never see this card before");
+                }
             }
-
-            Console.WriteLine("\nohya put your pin. or you press 0 to return to the main menu");
 
 
 
@@ -131,8 +162,14 @@ namespace ATMAPP
             {
                 try
                 {
-                    int pin = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine("\nohya put your pin. or you press 0 to return to the main menu");
 
+                    int pin = Convert.ToInt32(Console.ReadLine());
+                    if (account.TotalLogin == 3)
+                    {
+                        Console.WriteLine($"Your account has been locked. You inputed a wrong pin {account.TotalLogin} times.");
+                        Environment.Exit(0);
+                    }
 
                     if (pin == 0)
                     {
@@ -163,9 +200,9 @@ namespace ATMAPP
         }
 
 
-        private void Init()
+        protected override void Init()
         {
-
+            Console.Clear();
             Console.WriteLine("\nYou don show!");
             Designs.PidginOptions();
 
@@ -201,7 +238,7 @@ namespace ATMAPP
                 }
                 catch
                 {
-                    Console.WriteLine("E no work. Na only numbers wey whole you fit put between 0 - 3");
+                    Console.WriteLine("E no work. Na only numbers wey whole you fit put between 0 - 4");
 
 
                 }

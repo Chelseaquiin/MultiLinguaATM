@@ -1,38 +1,54 @@
 ﻿namespace ATMAPP
 {
-    internal class ATMEnglish : IActions, ILogin
-    {
-        private List<CardDetails> userList = new List<CardDetails>();
-        private CardDetails account = new CardDetails();
-        private CardDetails accountToTransfer = new CardDetails();
-        public void Balance()
-        {
 
+    
+    internal class ATMEnglish
+    {
+        event Action<string> AccountLocked;
+        event Action<string> AccountTobeLockedSoon;
+        event Action<string> LoginSucceeded;
+        event Action<string> LowAccountBalance;
+        event Action<string> TransferSuccessful;
+
+        protected List<CardDetails> userList = new List<CardDetails>();
+        protected CardDetails account = new CardDetails();
+        protected CardDetails accountToTransfer = new CardDetails();
+        protected virtual void Balance()
+        {
+            Console.Clear();
             double balance = account.AccountBalance;
             Designs.LogInAnime();
 
             Console.WriteLine("\nBalance " + balance);
 
         }
-        public void Transfer()
+        protected virtual void Transfer()
         {
             try
             {
-                Console.WriteLine();
+                Console.Clear();
                 Designs.LogInAnime();
                 Console.WriteLine("\nAccount to transfer to");
                 string cardNum = Console.ReadLine();
 
+
                 Console.WriteLine("How much do you want to transfer?");
 
                 double amount = Convert.ToDouble(Console.ReadLine());
-
                 accountToTransfer = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+
+
+                if (accountToTransfer == null)
+                {
+                    Console.WriteLine("Account not recognized");
+
+                }
 
                 if (amount < 100)
                 {
-                    Console.WriteLine("You can't transfer less than 100 naira");
+                    Console.WriteLine("\nYou can't transfer less than 100 naira");
                 }
+               
 
                else if (account.AccountBalance >= amount && accountToTransfer != null)
                 {
@@ -40,13 +56,14 @@
 
                     account.AccountBalance -= amount;
                     Designs.LogInAnime();
-                    Console.WriteLine($"\nTransfer to {accountToTransfer.FullName} was successful. \nYour Balance is: {account.AccountBalance}");
+                    OnTransferSuccessful($"\nTransfer to {accountToTransfer.FullName} was successful. \nYour Balance is: {account.AccountBalance}");
+
                 }
                 else
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\ncard not recognized or Insufficient funds");
-                    Console.WriteLine($"Balance {account.AccountBalance}");
+                    Console.WriteLine("\nInsufficient funds");
+                    Console.WriteLine($"\nBalance {account.AccountBalance}");
                 }
 
 
@@ -58,9 +75,9 @@
             }
 
         }
-        public void Deposit()
+        protected virtual void Deposit()
         {
-
+            Console.Clear();
             Console.WriteLine("Deposit some cash");
             try
             {
@@ -86,8 +103,9 @@
 
         }
 
-        public void Withdraw()
+        protected virtual void Withdraw()
         {
+            Console.Clear();
             Console.WriteLine("How much do you want to withdraw?");
 
             try
@@ -97,7 +115,7 @@
                 double withdrawal = Convert.ToDouble(Console.ReadLine());
                 Designs.LogInAnime();
 
-                if(withdrawal < 100)
+                if (withdrawal < 100)
                 {
                     Console.WriteLine($"You can't withdraw {withdrawal}");
                     Console.WriteLine("Select 100 and above");
@@ -105,8 +123,8 @@
                 else if (account.AccountBalance < withdrawal)
                 {
                     Designs.LogInAnime();
-                    Console.WriteLine("\nInsufficient Balance");
-                    Console.WriteLine($"Balance: {account.AccountBalance}");
+                    OnLowAccountBalance($"\nInsufficient Balance \nBalance: {account.AccountBalance}");
+
                 }
                 else
                 {
@@ -120,37 +138,20 @@
                 Console.WriteLine(e.Message);
             }
         }
-
-        public void LogIn()
+        public void Start()
         {
-
-            userList.Add(new CardDetails("Amaka", "1234567890", 1234, 5000));
-            userList.Add(new CardDetails("Jude", "1236786890", 1234, 4300));
-            userList.Add(new CardDetails("Ada", "12367800009", 1234, 4700));
-            userList.Add(new CardDetails("James", "1236786890", 2341, 4000));
+            LogIn();
+        }
+        protected virtual void LogIn()
+        {
+            Console.Clear();
+            userList.Add(new CardDetails("Amaka", "1234567890", 1234, 5000, false));
+            userList.Add(new CardDetails("Jude", "1236786890", 1234, 4300, false));
+            userList.Add(new CardDetails("Ada", "12367800009", 1234, 4700, false));
+            userList.Add(new CardDetails("James", "1236786800", 2341, 4000, true));
 
             Console.WriteLine();
             Designs.LongLine();
-
-            Console.WriteLine("\nPlease enter your card Number");
-
-            while (true)
-            {
-                string cardNum = Console.ReadLine();
-                account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
-
-                if (account != null)
-                {
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("card not recognized");
-                }
-
-            }
-
-            Console.WriteLine("\nPlease enter your pin. Press 0 to return to the main menu");
 
 
 
@@ -158,9 +159,41 @@
             {
                 try
                 {
+                    Console.WriteLine("\nPlease enter your card Number");
+                    string cardNum = Console.ReadLine();
+                    account = userList.FirstOrDefault<CardDetails>(a => a.CardNumber == cardNum);
+                    if (account.IsLocked == true)
+                    {
+                        OnAccountLocked($"Your account is locked. Rectify this issue with your bank");
+                        Environment.Exit(0);
+                    }
+                    if (account != null)
+                    {
+                        break;
+                    }
+
+
+                }
+                catch
+                {
+                    Console.WriteLine("card not recognized");
+                }
+
+
+
+            }
+
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("\nPlease enter your pin or Press 0 to return");
                     int pin = Convert.ToInt32(Console.ReadLine());
-
-
+                    if (account.TotalLogin == 3)
+                    {
+                        OnAccountLocked($"Your account has been locked. You inputed a wrong pin {account.TotalLogin} times.");
+                        Environment.Exit(0);
+                    }
                     if (pin == 0)
                     {
                         Designs.LanguageOptions();
@@ -169,14 +202,14 @@
 
                     if (account.CardPin == pin)
                     {
-
-                        Console.WriteLine("\nHello " + account.FullName + ".");
+                        OnLoginSucceeded($"\nHello {account.FullName} !");
                         Designs.LongLine();
                         Init();
                     }
                     else
                     {
-                        Console.WriteLine("Incorrect Pin. Try again");
+                        OnAccountTobeLockedSoon("Incorrect pin. Your card will be locked after the 4th incorrect pin trial");
+                        account.TotalLogin++;
                     }
 
                     Designs.LongLine();
@@ -185,14 +218,16 @@
                 {
                     Console.WriteLine("Pins are numbers");
                 }
+
+
             }
 
         }
 
 
-        private void Init()
+        protected virtual void Init()
         {
-
+            Console.Clear();
             Console.WriteLine("\nWelcome!");
             Designs.Options();
 
@@ -228,12 +263,52 @@
                 }
                 catch
                 {
-                    Console.WriteLine("Invalid. You can only choose whole numbers between 0 - 3");
+                    Console.WriteLine("Invalid. You can only choose whole numbers between 0 - 4");
 
 
                 }
             }
 
+        }
+        public  void AddAccountLocked(Action<string> method)
+        {
+            AccountLocked+= method;
+        }
+        public void AddAccountTobeLockedSoon(Action<string> method)
+        {
+            AccountTobeLockedSoon += method;
+        }
+        public void AddLoginSucceeded(Action<string> method)
+        {
+            LoginSucceeded += method;
+        }
+        public void AddLowAccountBalance(Action<string> method)
+        {
+            LowAccountBalance += method;
+        }
+        public void AddTransferSuccessful(Action<string> method)
+        {
+            TransferSuccessful += method;
+        }
+        protected virtual void OnAccountLocked(string message)
+        {
+            AccountLocked?.Invoke(message);
+        }
+       protected virtual void OnAccountTobeLockedSoon(string message)
+        {
+            AccountTobeLockedSoon?.Invoke(message);
+        }
+        protected virtual void OnLoginSucceeded(string message)
+        {
+            LoginSucceeded?.Invoke(message);
+        }
+        protected virtual void OnLowAccountBalance(string message)
+        {
+            LowAccountBalance?.Invoke(message);
+        }
+        protected virtual void OnTransferSuccessful(string message)
+        {
+            TransferSuccessful?.Invoke(message);
         }
     }
 }
